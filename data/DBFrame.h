@@ -24,3 +24,5 @@ struct Product {
     std::string connectivity;
     std::string features;
 };
+
+// this is the data base frame layout with all the skeleton and type definitions
