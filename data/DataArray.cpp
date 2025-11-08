@@ -1,0 +1,69 @@
+#include "DBFrame.h"
+
+
+int InitDBFrame() {
+    std::map<int, Product> products;
+
+    products[1001] = {"Apple iPhone 15", "Electronics", 1199.99, 50, "Apple", "iPhone 15", "Black", "146.7 x 71.5 x 7.8 mm", 174.0, "Aluminum/Glass", "1 Year", "2025-09-01", "USA", "20 hours", 6.1, "A17 Bionic", 8, 256, "5G, WiFi 6, Bluetooth 5.3", "Face ID, Dual Cameras, MagSafe"};
+    products[1002] = {"Samsung Galaxy S24", "Electronics", 1099.99, 40, "Samsung", "Galaxy S24", "Silver", "146.0 x 70.5 x 7.6 mm", 168.0, "Aluminum/Glass", "1 Year", "2025-02-10", "South Korea", "22 hours", 6.2, "Snapdragon 8 Gen 3", 12, 512, "5G, WiFi 6E, Bluetooth 5.3", "Triple Camera, Fast Charging"};
+    products[1003] = {"Sony WH-1000XM5 Headphones", "Audio", 399.99, 30, "Sony", "WH-1000XM5", "Black", "250 x 235 x 50 mm", 254.0, "Plastic/Metal", "2 Years", "2024-06-15", "Japan", "30 hours", 0, "NA", 0, 0, "Bluetooth 5.2", "Noise Cancelling, Touch Controls"};
+    products[1004] = {"Dell XPS 13 Laptop", "Computers", 999.99, 25, "Dell", "XPS 13", "Silver", "295 x 199 x 14 mm", 1200.0, "Aluminum", "1 Year", "2025-03-20", "USA", "12 hours", 13.4, "Intel i7-1360P", 16, 512, "WiFi 6E, Bluetooth 5.3", "FHD Display, Fingerprint Reader"};
+    products[1005] = {"Logitech MX Master 3 Mouse", "Accessories", 99.99, 100, "Logitech", "MX Master 3", "Gray", "124 x 84 x 51 mm", 141.0, "Plastic", "2 Years", "2023-11-05", "Switzerland", "70 days", 0, "NA", 0, 0, "Bluetooth, USB-C", "Ergonomic, Customizable Buttons"};
+    products[1006] = {"Amazon Echo Dot (5th Gen)", "Smart Home", 49.99, 200, "Amazon", "Echo Dot 5", "Charcoal", "100 x 100 x 50 mm", 300.0, "Plastic", "1 Year", "2024-10-01", "USA", "12 hours", 0, "NA", 0, 0, "WiFi, Bluetooth", "Voice Assistant, Smart Home Control"};
+    products[1007] = {"Nintendo Switch OLED", "Gaming", 349.99, 60, "Nintendo", "Switch OLED", "White", "242 x 102 x 13.9 mm", 320.0, "Plastic", "1 Year", "2023-09-15", "Japan", "9 hours", 7.0, "Custom NVIDIA Tegra", 0, 0, "WiFi, Bluetooth", "Dockable, OLED Screen"};
+    products[1008] = {"Canon EOS R6 Camera", "Photography", 2499.99, 15, "Canon", "EOS R6", "Black", "138 x 98 x 88 mm", 680.0, "Magnesium Alloy", "2 Years", "2024-02-12", "Japan", "1,080 shots", 3.0, "DIGIC X", 0, 0, "WiFi, Bluetooth", "Full Frame, 4K Video"};
+    products[1009] = {"Fitbit Charge 6", "Wearables", 149.99, 80, "Fitbit", "Charge 6", "Black", "43 x 22 x 12 mm", 30.0, "Silicone", "1 Year", "2025-01-01", "USA", "7 days", 1.0, "NA", 0, 0, "Bluetooth", "Heart Rate, Sleep Tracking"};
+    products[1010] = {"Instant Pot Duo 7-in-1", "Kitchen", 89.99, 120, "Instant Pot", "Duo 7", "Silver", "30 x 30 x 35 cm", 6000.0, "Stainless Steel", "1 Year", "2024-05-10", "China", "NA", 0, "NA", 0, 0, "Electric", "Pressure Cooker, Slow Cooker"};
+    
+    // Adding more products (11-30)
+    products[1011] = {"Nike Air Zoom Pegasus 40", "Footwear", 129.99, 70, "Nike", "Pegasus 40", "Blue", "NA", 300.0, "Mesh/Rubber", "1 Year", "2024-07-10", "Vietnam", "NA", 0, "NA", 0, 0, "NA", "Running Shoes"};
+    products[1012] = {"Adidas Ultraboost 23", "Footwear", 179.99, 50, "Adidas", "Ultraboost 23", "White", "NA", 320.0, "Knit/Rubber", "1 Year", "2024-03-15", "Vietnam", "NA", 0, "NA", 0, 0, "NA", "Running Shoes, Boost Cushioning"};
+    products[1013] = {"Sony Bravia 65\" 4K TV", "Electronics", 1499.99, 20, "Sony", "Bravia 65X90", "Black", "1449 x 830 x 59 mm", 25000.0, "Plastic/Metal", "2 Years", "2025-01-01", "Japan", "NA", 65, "NA", 0, 0, "WiFi, HDMI, Bluetooth", "4K HDR, Smart TV"};
+    products[1014] = {"Bose SoundLink Revolve+", "Audio", 299.99, 35, "Bose", "SoundLink Revolve+", "Silver", "105 x 105 x 184 mm", 900.0, "Aluminum", "1 Year", "2024-08-01", "USA", "12 hours", 0, "NA", 0, 0, "Bluetooth", "360° Sound, Waterproof"};
+    products[1015] = {"Apple MacBook Air M2", "Computers", 1249.99, 18, "Apple", "MacBook Air M2", "Silver", "304 x 212 x 11 mm", 1200.0, "Aluminum", "1 Year", "2024-07-20", "USA", "18 hours", 13.6, "Apple M2", 8, 512, "WiFi 6, Bluetooth 5.3", "Retina Display, Lightweight"};
+    products[1016] = {"Samsung Galaxy Tab S9", "Electronics", 699.99, 40, "Samsung", "Tab S9", "Gray", "253 x 165 x 6 mm", 500.0, "Aluminum", "1 Year", "2025-02-10", "South Korea", "14 hours", 11.0, "Snapdragon 8 Gen 3", 8, 256, "WiFi, 5G, Bluetooth", "AMOLED Display, S Pen"};
+    products[1017] = {"GoPro HERO12 Black", "Photography", 499.99, 22, "GoPro", "HERO12", "Black", "71 x 55 x 33 mm", 153.0, "Plastic", "1 Year", "2025-01-05", "USA", "2 hours", 0, "GP2", 0, 0, "WiFi, Bluetooth", "4K Video, Waterproof"};
+    products[1018] = {"Dyson V15 Detect Vacuum", "Home Appliances", 699.99, 28, "Dyson", "V15 Detect", "Purple", "1260 x 250 x 220 mm", 3000.0, "Plastic/Metal", "2 Years", "2024-10-10", "UK", "60 min", 0, "NA", 0, 0, "Cordless", "Laser Detect, HEPA Filter"};
+    products[1019] = {"KitchenAid Artisan Mixer", "Kitchen", 379.99, 35, "KitchenAid", "Artisan 5QT", "Red", "357 x 218 x 356 mm", 11000.0, "Metal", "1 Year", "2024-11-01", "USA", "NA", 0, "NA", 0, 0, "Electric", "Multiple Attachments, 5 QT Bowl"};
+    products[1020] = {"PlayStation 5 Console", "Gaming", 499.99, 25, "Sony", "PS5", "White", "390 x 104 x 260 mm", 4500.0, "Plastic", "1 Year", "2023-12-01", "Japan", "NA", 0, "Custom AMD CPU", 0, 0, "WiFi, HDMI, Bluetooth", "4K Gaming, DualSense Controller"};
+    
+    // Adding products 21-30
+    products[1021] = {"Xbox Series X", "Gaming", 499.99, 30, "Microsoft", "Series X", "Black", "301 x 151 x 151 mm", 4200.0, "Plastic/Metal", "1 Year", "2023-12-01", "USA", "NA", 0, "Custom AMD CPU", 0, 0, "WiFi, HDMI, Bluetooth", "4K Gaming, Backward Compatible"};
+    products[1022] = {"HP Spectre x360", "Computers", 1299.99, 20, "HP", "Spectre x360", "Silver", "304 x 203 x 17 mm", 1300.0, "Aluminum", "1 Year", "2025-01-10", "USA", "15 hours", 13.3, "Intel i7-1360P", 16, 512, "WiFi 6, Bluetooth 5.3", "Convertible, Touchscreen"};
+    products[1023] = {"Garmin Fenix 8", "Wearables", 699.99, 45, "Garmin", "Fenix 8", "Black", "47 x 47 x 14 mm", 80.0, "Titanium/Plastic", "1 Year", "2025-02-01", "USA", "21 days", 1.3, "NA", 0, 0, "GPS, Bluetooth", "Multisport, Solar Charging"};
+    products[1024] = {"Apple Watch Series 9", "Wearables", 399.99, 50, "Apple", "Watch Series 9", "Silver", "44 x 38 x 10 mm", 50.0, "Aluminum", "1 Year", "2025-03-01", "USA", "18 hours", 1.78, "S9 SiP", 0, 0, "Bluetooth, WiFi", "Fitness Tracking, ECG, GPS"};
+    products[1025] = {"Google Pixel 8", "Electronics", 899.99, 35, "Google", "Pixel 8", "Black", "146 x 70 x 8 mm", 172.0, "Aluminum/Glass", "1 Year", "2025-01-15", "USA", "24 hours", 6.2, "Google Tensor G3", 8, 256, "5G, WiFi 6E, Bluetooth 5.3", "Dual Camera, Google AI Features"};
+    products[1026] = {"Samsung Galaxy Buds 3", "Audio", 179.99, 60, "Samsung", "Galaxy Buds 3", "White", "22 x 20 x 24 mm", 6.3, "Plastic", "1 Year", "2024-08-10", "South Korea", "8 hours", 0, "NA", 0, 0, "Bluetooth 5.2", "Noise Cancelling, Wireless Charging"};
+    products[1027] = {"Razer Blade 16", "Computers", 2499.99, 12, "Razer", "Blade 16", "Black", "355 x 235 x 20 mm", 2200.0, "Aluminum", "1 Year", "2025-03-01", "USA", "8 hours", 16.0, "Intel i9-14900H", 32, 1024, "WiFi 6E, Bluetooth 5.3", "Gaming Laptop, RTX 4080"};
+    products[1028] = {"Apple iPad Pro 12.9", "Electronics", 1099.99, 30, "Apple", "iPad Pro 12.9", "Silver", "280.6 x 214.9 x 6.4 mm", 682.0, "Aluminum/Glass", "1 Year", "2025-01-20", "USA", "12 hours", 12.9, "Apple M2", 16, 512, "WiFi 6, 5G, Bluetooth", "Liquid Retina XDR, Pencil Support"};
+    products[1029] = {"DJI Mini 4 Pro", "Photography", 759.99, 18, "DJI", "Mini 4 Pro", "White", "159 x 203 x 56 mm", 249.0, "Plastic/Metal", "1 Year", "2024-12-01", "China", "34 minutes", 0, "NA", 0, 0, "WiFi, GPS", "Foldable, 4K Camera"};
+    products[1030] = {"Sony Alpha a7 IV", "Photography", 2499.99, 10, "Sony", "Alpha a7 IV", "Black", "131 x 96 x 80 mm", 658.0, "Magnesium Alloy", "2 Years", "2024-11-10", "Japan", "580 shots", 3.0, "BIONZ XR", 0, 0, "WiFi, Bluetooth", "Full Frame, 4K Video"};
+
+    // Print all products
+    for (const auto& [id, p] : products) {
+        std::cout << "Product ID: " << id << "\n";
+        std::cout << "Name: " << p.name << "\n";
+        std::cout << "Category: " << p.category << "\n";
+        std::cout << "Price: $" << p.price << "\n";
+        std::cout << "Stock: " << p.stockQuantity << "\n";
+        std::cout << "Brand: " << p.brand << "\n";
+        std::cout << "Model: " << p.model << "\n";
+        std::cout << "Color: " << p.color << "\n";
+        std::cout << "Dimensions: " << p.dimensions << "\n";
+        std::cout << "Weight: " << p.weight << "g\n";
+        std::cout << "Material: " << p.material << "\n";
+        std::cout << "Warranty: " << p.warranty << "\n";
+        std::cout << "Release Date: " << p.releaseDate << "\n";
+        std::cout << "Origin Country: " << p.originCountry << "\n";
+        std::cout << "Battery Life: " << p.batteryLife << "\n";
+        std::cout << "Screen Size: " << p.screenSize << " inches\n";
+        std::cout << "Processor: " << p.processor << "\n";
+        std::cout << "RAM: " << p.ramGB << " GB\n";
+        std::cout << "Storage: " << p.storageGB << " GB\n";
+        std::cout << "Connectivity: " << p.connectivity << "\n";
+        std::cout << "Features: " << p.features << "\n";
+        std::cout << "-----------------------------------\n";
+    }
+
+    return 0;
+}
