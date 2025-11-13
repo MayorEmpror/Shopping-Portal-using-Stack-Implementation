@@ -13,11 +13,12 @@ class Products{
         private:
         string name;
         double price;
-        ArrayStack<Reviews> reviews;
+        stack<Reviews> reviews;
         string ImageURL;
         string description;
         string color;
 
+        public:
         Products(string name, double price, stack<Reviews> reviews, string ImageURL, string description, string color)
         :name(name), price(price), reviews(reviews), ImageURL(ImageURL), description(description), color(color){}
 
@@ -53,7 +54,7 @@ class Products{
         string getdescription(){return this->description;}
         string getcolor(){ return this->color;}
         string getImageURL(){return this->ImageURL;}
-        ArrayStack<Reviews> getReivews(){ return this->reviews;}
+        stack<Reviews> getReivews(){ return this->reviews;}
 
 
         void setname(string newname){  this->name = newname;}
@@ -61,7 +62,7 @@ class Products{
         void setdescription(string newdesc){ this->description = newdesc;}
         void setcolor(string newcolor){  this->color = newcolor;}
         void setImageURL(string newIMAGE){ this->ImageURL = newIMAGE;}
-        void setReivews( ArrayStack<Reviews> newreviews){  this->reviews = newreviews;}
+        void setReivews( stack<Reviews> newreviews){  this->reviews = newreviews;}
 
 
         ~Products(){
