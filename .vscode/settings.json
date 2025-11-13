@@ -2,6 +2,7 @@
     "C_Cpp.errorSquiggles": "enabled",
     "files.associations": {
         "*.gen": "json",
-        "qdebug": "cpp"
+        "qdebug": "cpp",
+        "list": "cpp"
     }
 }
