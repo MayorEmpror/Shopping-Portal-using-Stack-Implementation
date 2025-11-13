@@ -15,8 +15,6 @@ class Products{
         int stock;
 };
 
-
-
 #endif
 
 
