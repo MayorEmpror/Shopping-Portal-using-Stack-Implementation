@@ -3,6 +3,7 @@
 
 #include "../coupons/main.h"
 #include "../review/main.h"
+#include "../../components/stacks/ImplementationStack.h"
 #include <iostream>
 #include <string>
 #include <stack>
@@ -12,7 +13,8 @@ class Products{
         private:
         string name;
         double price;
-        int stock;
+        stack<Reviews> reviews;
+        
 };
 
 #endif
