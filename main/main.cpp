@@ -7,9 +7,12 @@
 #include <QHBoxLayout>
 #include <QGridLayout>
 #include <QScrollArea>
+#include <QPixmap>
 #include <QStyleOption>
 #include <QPainter>
-
+#include <vector>
+#include "../templates/products/main.h"  // your Products class header
+#include "../data/DataArray.h"
 class DarkWidget : public QWidget {
 public:
     using QWidget::QWidget;
@@ -22,13 +25,18 @@ protected:
     }
 };
 
-QFrame* createProductCard(const QString &title, const QString &price, const QString &desc) {
+// Create a product card using the Products class
+QFrame* createProductCard(const Products& product) {
     QFrame *card = new QFrame();
+    card->setFixedSize(220, 300);
     card->setStyleSheet(R"(
         QFrame {
             background-color: #1c1c1c;
             border-radius: 12px;
             padding: 10px;
+        }
+        QFrame:hover {
+            background-color: #2a2a2a;
         }
         QLabel {
             color: #ffffff;
@@ -36,83 +44,78 @@ QFrame* createProductCard(const QString &title, const QString &price, const QStr
     )");
 
     QVBoxLayout *vbox = new QVBoxLayout(card);
+    vbox->setAlignment(Qt::AlignTop);
 
+    // Image
     QLabel *img = new QLabel();
-    img->setFixedSize(100, 100);
-    img->setStyleSheet("background-color: #333333; border-radius: 10px;");
+    img->setFixedSize(150, 150);
     img->setAlignment(Qt::AlignCenter);
-    img->setText("🪴");
+    QPixmap pix(QString::fromStdString(product.getMainImage())); // use image URL/path
+    if (!pix.isNull()) {
+        img->setPixmap(pix.scaled(150, 150, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    } else {
+        img->setStyleSheet("background-color: #333333; border-radius: 10px;");
+        img->setText("🖼"); // fallback
+    }
 
-    QLabel *name = new QLabel("<b>" + title + "</b>");
-    QLabel *descLabel = new QLabel(desc);
-    QLabel *priceLabel = new QLabel(price);
+    QLabel *name = new QLabel(QString::fromStdString(product.getname()));
+    name->setWordWrap(true);
+
+    QLabel *price = new QLabel("$" + QString::number(product.getprice()));
+    price->setStyleSheet("font-weight:bold; color:#00ff00;");
+
+    QLabel *features = new QLabel(QString::fromStdString(product.getfeatures()));
+    features->setWordWrap(true);
+    features->setStyleSheet("font-size: 11px; color:#cccccc;");
 
     vbox->addWidget(img, 0, Qt::AlignCenter);
     vbox->addWidget(name, 0, Qt::AlignCenter);
-    vbox->addWidget(descLabel, 0, Qt::AlignCenter);
-    vbox->addWidget(priceLabel, 0, Qt::AlignCenter);
+    vbox->addWidget(price, 0, Qt::AlignCenter);
+    vbox->addWidget(features, 0, Qt::AlignCenter);
 
     return card;
 }
 
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
-    app.setStyleSheet(R"(
-        QWidget {
-            background-color: #121212;
-            font-family: "Segoe UI";
-        }
-        QPushButton {
-            background-color: #292929;
-            color: #ffffff;
-            border-radius: 8px;
-            padding: 8px 12px;
-        }
-        QPushButton:hover {
-            background-color: #3a3a3a;
-        }
-        QLabel {
-            color: #cccccc;
-        }
-    )");
-
     QWidget window;
-    window.setWindowTitle("Plantify Catalog - Qt Edition");
-    window.resize(900, 600);
+    window.setWindowTitle("Product Catalog - Qt Edition");
+    window.resize(1000, 600);
 
-    // Layouts
     QHBoxLayout *mainLayout = new QHBoxLayout(&window);
 
-    // Sidebar (filters)
+    // Sidebar
     QVBoxLayout *sidebarLayout = new QVBoxLayout();
     QLabel *filtersLabel = new QLabel("<b>Filters</b>");
     filtersLabel->setStyleSheet("color: #ffffff; font-size: 18px;");
     sidebarLayout->addWidget(filtersLabel);
 
-    QPushButton *cat1 = new QPushButton("Potted Elegance");
-    QPushButton *cat2 = new QPushButton("Outdoor Charm");
-    QPushButton *cat3 = new QPushButton("Compact Decor");
-    sidebarLayout->addWidget(cat1);
-    sidebarLayout->addWidget(cat2);
-    sidebarLayout->addWidget(cat3);
+    QStringList categories = {"Electronics", "Computers", "Audio", "Gaming", "Kitchen"};
+    for (const QString &cat : categories) {
+        QPushButton *btn = new QPushButton(cat);
+        btn->setStyleSheet("background-color: #292929; color: #fff; border-radius: 8px; padding: 8px;");
+        sidebarLayout->addWidget(btn);
+    }
     sidebarLayout->addStretch(1);
 
     QWidget *sidebar = new QWidget();
     sidebar->setLayout(sidebarLayout);
-    sidebar->setFixedWidth(200);
-    sidebar->setStyleSheet("background-color: #181818; border-radius: 12px;");
+    sidebar->setFixedWidth(220);
+    sidebar->setStyleSheet("background-color: #181818; border-radius: 12px; padding: 10px;");
 
-    // Catalog area
+    // Catalog
     QWidget *catalog = new QWidget();
     QGridLayout *grid = new QGridLayout(catalog);
     grid->setSpacing(20);
+    grid->setContentsMargins(10, 10, 10, 10);
 
-    QStringList names = {"Tropical Breeze Set", "Cozy Corner Plant", "Fresh Vibe Pot", "Serene Space Set", "Golden Hour Leaf", "Minimalist Luxe Pot"};
-    QStringList prices = {"$180", "$240", "$120", "$120", "$80", "$180"};
-    QStringList descs = {"Lush & vibrant", "Rich green texture", "Glossy foliage charm", "Calming deep green", "Warm leaf tones", "Clean modern lines"};
+    // Create products (use all 30 from your InitDBFrame)
 
-    for (int i = 0; i < names.size(); ++i) {
-        QFrame *card = createProductCard(names[i], prices[i], descs[i]);
+    std::vector<Products> productList = InitDBFrame();
+
+    // Add all product cards
+    for (size_t i = 0; i < productList.size(); ++i) {
+        QFrame *card = createProductCard(productList[i]);
         grid->addWidget(card, i / 3, i % 3);
     }
 
@@ -126,5 +129,4 @@ int main(int argc, char *argv[]) {
 
     window.show();
     return app.exec();
-    
 }
