@@ -23,6 +23,7 @@ struct Product {
     int storageGB;
     std::string connectivity;
     std::string features;
+    std::string ImageURL;
 };
 
 // this is the data base frame layout with all the skeleton and type definitions
