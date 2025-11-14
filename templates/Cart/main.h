@@ -62,14 +62,35 @@ public:
     }
 
     // Remove product from cart (LIFO)
-    void removeFromCart() {
-        if (!ItemsToBuy.empty()) {
-            Products removed = ItemsToBuy.top();
+    void removeFromCart(Products torem) {
+        if (ItemsToBuy.empty()) {
+            return;
+        }
+    
+        stack<Products> temp;
+        bool removedFlag = false;
+    
+        // Move elements until we find the one to remove
+        while (!ItemsToBuy.empty()) {
+            Products topItem = ItemsToBuy.top();
             ItemsToBuy.pop();
-            updateBill(-removed.getprice()); // subtract price
+    
+            if (!removedFlag && topItem.getID() == torem.getID()) {
+                // Found the element, do NOT push into temp
+                updateBill(-topItem.getprice());
+                removedFlag = true;
+            } else {
+                temp.push(topItem);
+            }
+        }
+    
+        // Restore elements to the original stack (same order)
+        while (!temp.empty()) {
+            ItemsToBuy.push(temp.top());
+            temp.pop();
         }
     }
-
+    
     // Apply coupons (stub)
     void applyCoupons(const list<Coupons> &couponsToApply) {
         // logic for applying coupons

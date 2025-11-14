@@ -11,6 +11,7 @@ using namespace std;
 
 class Products{
         private:
+        int id;
         string name;
         double price;
         stack<Reviews> reviews;
@@ -19,10 +20,11 @@ class Products{
         string color;
 
         public:
-        Products(string name, double price, stack<Reviews> reviews, string ImageURL, string description, string color)
+        Products(int id, string name, double price, stack<Reviews> reviews, string ImageURL, string description, string color)
         :name(name), price(price), reviews(reviews), ImageURL(ImageURL), description(description), color(color){}
 
         Products(){
+                this->id = NULL;
                 this->name = " ";
                 this->color = " ";
                 this->description = " ";
@@ -31,6 +33,7 @@ class Products{
         }
 
         Products(const Products& other){
+                this->id = other.id;
                  this->name = other.name;
                  this->price  = other.price;
                  this->reviews = other.reviews;
@@ -41,6 +44,7 @@ class Products{
 
         Products& operator =(const Products& other){
                 if(this != &other){
+                        this->id = other.id;   
                         this->name = other.name;
                         this->price  = other.price;
                         this->reviews = other.reviews;
@@ -55,7 +59,7 @@ class Products{
         string getcolor(){ return this->color;}
         string getImageURL(){return this->ImageURL;}
         stack<Reviews> getReivews(){ return this->reviews;}
-
+        int getID(){return this->id;}
 
         void setname(string newname){  this->name = newname;}
         void setprice(int newprice){ this->price = newprice;}

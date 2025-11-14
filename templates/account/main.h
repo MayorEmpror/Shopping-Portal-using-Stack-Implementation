@@ -9,6 +9,7 @@ class Account{
     double totalbalance;
     double lifetimespent;
     string paymentmethods;
+    
 
     public:
     Account(double totalbalance, double lifetimespent, string paymentmethods): 
