@@ -1297,11 +1297,19 @@ main.o: main.cpp /opt/homebrew/lib/QtWidgets.framework/Headers/QApplication \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/qscrollarea.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/QPixmap \
 		/opt/homebrew/lib/QtGui.framework/Headers/qpixmap.h \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/QStackedWidget \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/qstackedwidget.h \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/QStyleOption \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/qstyleoption.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/QPainter \
 		/opt/homebrew/lib/QtGui.framework/Headers/qpainter.h \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/QMessageBox \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/qmessagebox.h \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/QSpacerItem \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/qlayoutitem.h \
 		../templates/products/main.h \
+		../templates/Cart/main.h \
+		../templates/coupons/main.h \
 		../data/DataArray.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o main.cpp
 
