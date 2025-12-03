@@ -15,6 +15,7 @@
 #include <QMessageBox>
 #include <QSpacerItem>
 #include <stack>
+#include <QCheckBox>
 
 #include "../templates/products/main.h"
 #include "../data/DataArray.h"
@@ -158,97 +159,299 @@ QWidget* buildCatalogPage() {
 // ----------------------------------------------
 QWidget* buildCartPage() {
     QWidget *cartPage = new QWidget();
-    cartPage->setStyleSheet("background-color: #202020;");
+    cartPage->setStyleSheet("background-color: #0a0a0a;");
 
-    QVBoxLayout *layout = new QVBoxLayout(cartPage);
-    layout->setContentsMargins(20, 20, 20, 20);
-    layout->setSpacing(15);
+    QHBoxLayout *mainLayout = new QHBoxLayout(cartPage);
+    mainLayout->setContentsMargins(30, 30, 30, 30);
+    mainLayout->setSpacing(30);
 
+    // ========== LEFT SIDE: Cart Items ==========
+    QWidget *itemsContainer = new QWidget();
+    itemsContainer->setStyleSheet("background-color: transparent;");
+    QVBoxLayout *itemsLayout = new QVBoxLayout(itemsContainer);
+    itemsLayout->setContentsMargins(0, 0, 0, 0);
+    itemsLayout->setSpacing(20);
+
+    // Title
     QLabel *title = new QLabel("Your Cart");
-    title->setStyleSheet("color: white; font-size: 24px; font-weight: bold;");
-    layout->addWidget(title);
+    title->setStyleSheet("color: #ffffff; font-size: 28px; font-weight: bold;");
+    itemsLayout->addWidget(title);
 
     // Scroll area for items
     QScrollArea *scroll = new QScrollArea();
     scroll->setWidgetResizable(true);
-    scroll->setStyleSheet("QScrollArea { border: none; }");
+    scroll->setStyleSheet(R"(
+        QScrollArea {
+            border: none;
+            background-color: transparent;
+        }
+        QScrollBar:vertical {
+            background-color: #1a1a1a;
+            width: 8px;
+            border-radius: 4px;
+        }
+        QScrollBar::handle:vertical {
+            background-color: #333333;
+            border-radius: 4px;
+            min-height: 20px;
+        }
+        QScrollBar::handle:vertical:hover {
+            background-color: #444444;
+        }
+    )");
 
     QWidget *container = new QWidget();
     QVBoxLayout *listLayout = new QVBoxLayout(container);
-    listLayout->setSpacing(12);
+    listLayout->setSpacing(15);
+    listLayout->setContentsMargins(0, 0, 0, 0);
 
     CART &cart = currentUser.getShoppingCart();
     std::stack<Products> s = cart.getItemsToBuy();
+    std::vector<Products> productsList; // Store products for removal
 
+    // Convert stack to vector (for easier iteration and removal)
     while (!s.empty()) {
-        Products p = s.top();
+        productsList.push_back(s.top());
         s.pop();
+    }
 
+    // Create product cards
+    for (size_t i = 0; i < productsList.size(); ++i) {
+        Products p = productsList[i];
+        
         QFrame *itemFrame = new QFrame();
-        itemFrame->setStyleSheet("background-color: #2a2a2a; border-radius: 8px;");
-        itemFrame->setMinimumHeight(90);
+        itemFrame->setStyleSheet(R"(
+            QFrame {
+                background-color: #1a1a1a;
+                border: 1px solid #2a2a2a;
+                border-radius: 12px;
+                padding: 0px;
+            }
+            QFrame:hover {
+                border-color: #333333;
+            }
+        )");
+        itemFrame->setMinimumHeight(120);
 
         QHBoxLayout *h = new QHBoxLayout(itemFrame);
-        h->setContentsMargins(10, 10, 10, 10);
+        h->setContentsMargins(15, 15, 15, 15);
         h->setSpacing(15);
 
-        // Image
-       // Image
-QLabel *img = new QLabel();
-QPixmap pix(QString::fromStdString(p.getMainImage()));
-if (!pix.isNull()) {
-    img->setPixmap(pix.scaled(60, 60, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-}
-img->setFixedSize(60, 60);
+        // Checkbox (optional - for future selection feature)
+        QCheckBox *checkbox = new QCheckBox();
+        checkbox->setChecked(true);
+        checkbox->setStyleSheet(R"(
+            QCheckBox {
+                spacing: 8px;
+            }
+            QCheckBox::indicator {
+                width: 20px;
+                height: 20px;
+                border: 2px solid #444444;
+                border-radius: 4px;
+                background-color: #1a1a1a;
+            }
+            QCheckBox::indicator:checked {
+                background-color: #4a9eff;
+                border-color: #4a9eff;
+            }
+            QCheckBox::indicator:hover {
+                border-color: #4a9eff;
+            }
+        )");
+        h->addWidget(checkbox);
 
-        // Text (name + price)
-        QVBoxLayout *v = new QVBoxLayout();
-        QLabel *name = new QLabel(QString::fromStdString(p.getname()));
-        name->setStyleSheet("color: white; font-size: 16px;");
-        QLabel *price = new QLabel("$" + QString::number(p.getprice(), 'f', 2));
-        price->setStyleSheet("color: #00ff00; font-size: 14px; font-weight: bold;");
-
-        v->addWidget(name);
-        v->addWidget(price);
-
+        // Product Image
+        QLabel *img = new QLabel();
+        img->setFixedSize(90, 90);
+        img->setStyleSheet(R"(
+            QLabel {
+                background-color: #0a0a0a;
+                border-radius: 8px;
+                border: 1px solid #2a2a2a;
+            }
+        )");
+        QPixmap pix(QString::fromStdString(p.getMainImage()));
+        if (!pix.isNull()) {
+            img->setPixmap(pix.scaled(90, 90, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        } else {
+            img->setText("🖼");
+            img->setAlignment(Qt::AlignCenter);
+        }
         h->addWidget(img);
-        h->addLayout(v);
-        h->addStretch();
+
+        // Product Info (Name, Features, Price)
+        QVBoxLayout *infoLayout = new QVBoxLayout();
+        infoLayout->setSpacing(6);
+        infoLayout->setContentsMargins(0, 0, 0, 0);
+
+        QLabel *name = new QLabel(QString::fromStdString(p.getname()));
+        name->setStyleSheet("color: #ffffff; font-size: 16px; font-weight: 500;");
+        name->setWordWrap(true);
+        infoLayout->addWidget(name);
+
+        QLabel *features = new QLabel(QString::fromStdString(p.getfeatures()));
+        features->setStyleSheet("color: #888888; font-size: 12px;");
+        features->setWordWrap(true);
+        infoLayout->addWidget(features);
+
+        QLabel *price = new QLabel("$" + QString::number(p.getprice(), 'f', 2));
+        price->setStyleSheet("color: #00ff88; font-size: 18px; font-weight: bold; margin-top: 8px;");
+        infoLayout->addWidget(price);
+
+        infoLayout->addStretch();
+        h->addLayout(infoLayout, 1);
+
+        // Remove button
+        QPushButton *removeBtn = new QPushButton("✕");
+        removeBtn->setFixedSize(32, 32);
+        removeBtn->setStyleSheet(R"(
+            QPushButton {
+                background-color: transparent;
+                border: 1px solid #333333;
+                border-radius: 6px;
+                color: #888888;
+                font-size: 18px;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                background-color: #2a2a2a;
+                border-color: #ff4444;
+                color: #ff4444;
+            }
+            QPushButton:pressed {
+                background-color: #1a1a1a;
+            }
+        )");
+
+        // Store product for removal
+        Products productToRemove = p;
+        QObject::connect(removeBtn, &QPushButton::clicked, [productToRemove]() {
+            currentUser.removeFromCart(const_cast<Products&>(productToRemove));
+            UserStorage::saveUser(currentUser);
+            
+            // Refresh the cart page by rebuilding it
+            // This will be handled by the cart button click in main()
+            QMessageBox::information(nullptr, "Removed", 
+                QString::fromStdString(productToRemove.getname()) + " removed from cart.");
+        });
+
+        h->addWidget(removeBtn);
 
         listLayout->addWidget(itemFrame);
     }
 
+    if (productsList.empty()) {
+        QLabel *emptyLabel = new QLabel("Your cart is empty");
+        emptyLabel->setStyleSheet("color: #666666; font-size: 16px; padding: 40px;");
+        emptyLabel->setAlignment(Qt::AlignCenter);
+        listLayout->addWidget(emptyLabel);
+    }
+
     listLayout->addStretch(1);
-
     scroll->setWidget(container);
-    layout->addWidget(scroll);
+    itemsLayout->addWidget(scroll, 1);
 
-    // Summary area (subtotal + checkout button)
-    QFrame *summary = new QFrame();
-    summary->setStyleSheet("background-color: #1c1c1c; border-radius: 12px; padding: 15px;");
-    QVBoxLayout *sumLayout = new QVBoxLayout(summary);
+    // ========== RIGHT SIDE: Summary ==========
+    QWidget *summaryContainer = new QWidget();
+    summaryContainer->setFixedWidth(320);
+    summaryContainer->setStyleSheet("background-color: transparent;");
+    QVBoxLayout *summaryLayout = new QVBoxLayout(summaryContainer);
+    summaryLayout->setContentsMargins(0, 0, 0, 0);
+    summaryLayout->setSpacing(20);
 
-    // Calculate total
-    double total = 0;
+    // Price Details Card
+    QFrame *summaryCard = new QFrame();
+    summaryCard->setStyleSheet(R"(
+        QFrame {
+            background-color: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 12px;
+            padding: 20px;
+        }
+    )");
+    QVBoxLayout *cardLayout = new QVBoxLayout(summaryCard);
+    cardLayout->setSpacing(15);
+    cardLayout->setContentsMargins(0, 0, 0, 0);
+
+    QLabel *priceTitle = new QLabel("Price Details");
+    priceTitle->setStyleSheet("color: #ffffff; font-size: 18px; font-weight: bold;");
+    cardLayout->addWidget(priceTitle);
+
+    // Calculate totals
+    double subtotal = 0;
     std::stack<Products> temp = cart.getItemsToBuy();
     while (!temp.empty()) {
-        total += temp.top().getprice();
+        subtotal += temp.top().getprice();
         temp.pop();
     }
 
-    QLabel *subtotalLabel = new QLabel(QString("Subtotal: $%1").arg(total, 0, 'f', 2));
-    subtotalLabel->setStyleSheet("color: white; font-size: 16px;");
-    sumLayout->addWidget(subtotalLabel);
+    // Items count
+    QHBoxLayout *itemsRow = new QHBoxLayout();
+    QLabel *itemsLabel = new QLabel(QString("%1 item%2").arg(productsList.size()).arg(productsList.size() != 1 ? "s" : ""));
+    itemsLabel->setStyleSheet("color: #888888; font-size: 14px;");
+    QLabel *itemsPrice = new QLabel("$" + QString::number(subtotal, 'f', 2));
+    itemsPrice->setStyleSheet("color: #ffffff; font-size: 14px;");
+    itemsRow->addWidget(itemsLabel);
+    itemsRow->addStretch();
+    itemsRow->addWidget(itemsPrice);
+    cardLayout->addLayout(itemsRow);
 
+    // Delivery (always free for now)
+    QHBoxLayout *deliveryRow = new QHBoxLayout();
+    QLabel *deliveryLabel = new QLabel("Delivery Charges");
+    deliveryLabel->setStyleSheet("color: #888888; font-size: 14px;");
+    QLabel *deliveryPrice = new QLabel("Free Delivery");
+    deliveryPrice->setStyleSheet("color: #00ff88; font-size: 14px; font-weight: bold;");
+    deliveryRow->addWidget(deliveryLabel);
+    deliveryRow->addStretch();
+    deliveryRow->addWidget(deliveryPrice);
+    cardLayout->addLayout(deliveryRow);
+
+    // Separator line
+    QFrame *separator = new QFrame();
+    separator->setFrameShape(QFrame::HLine);
+    separator->setStyleSheet("QFrame { background-color: #2a2a2a; max-height: 1px; }");
+    cardLayout->addWidget(separator);
+
+    // Total Amount
+    QHBoxLayout *totalRow = new QHBoxLayout();
+    QLabel *totalLabel = new QLabel("Total Amount");
+    totalLabel->setStyleSheet("color: #ffffff; font-size: 18px; font-weight: bold;");
+    QLabel *totalPrice = new QLabel("$" + QString::number(subtotal, 'f', 2));
+    totalPrice->setStyleSheet("color: #ffffff; font-size: 20px; font-weight: bold;");
+    totalRow->addWidget(totalLabel);
+    totalRow->addStretch();
+    totalRow->addWidget(totalPrice);
+    cardLayout->addLayout(totalRow);
+
+    summaryLayout->addWidget(summaryCard);
+
+    // Checkout Button
     QPushButton *checkoutBtn = new QPushButton("Checkout");
-    checkoutBtn->setStyleSheet(
-        "background-color: #007bff; color: white; padding: 10px; border-radius: 8px;"
-    );
-    sumLayout->addWidget(checkoutBtn);
+    checkoutBtn->setMinimumHeight(52);
+    checkoutBtn->setStyleSheet(R"(
+        QPushButton {
+            background-color: #4a9eff;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            padding: 14px;
+            border-radius: 8px;
+            border: none;
+        }
+        QPushButton:hover {
+            background-color: #3a8eef;
+        }
+        QPushButton:pressed {
+            background-color: #2a7edf;
+        }
+    )");
+    summaryLayout->addWidget(checkoutBtn);
 
-    layout->addWidget(summary);
+    summaryLayout->addStretch();
 
-    // Checkout logic: use user's account balance
+    // Checkout logic
     QObject::connect(checkoutBtn, &QPushButton::clicked, []() {
         if (!currentUser.checkout()) {
             QMessageBox::warning(nullptr, "Insufficient funds",
@@ -268,6 +471,10 @@ img->setFixedSize(60, 60);
             }
         }
     });
+
+    // Add both sides to main layout
+    mainLayout->addWidget(itemsContainer, 2);  // Items take 2/3 of space
+    mainLayout->addWidget(summaryContainer, 1); // Summary takes 1/3
 
     return cartPage;
 }

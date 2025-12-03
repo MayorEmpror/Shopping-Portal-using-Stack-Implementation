@@ -1,2 +1,2 @@
-Hashir|123|customer|30000|0|paypal
+Hashir|123|customer|25540|4459.95|paypal
 user|0|customer|140.02|359.98|card

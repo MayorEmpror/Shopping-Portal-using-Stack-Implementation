@@ -1307,6 +1307,8 @@ main.o: main.cpp /opt/homebrew/lib/QtWidgets.framework/Headers/QApplication \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/qmessagebox.h \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/QSpacerItem \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/qlayoutitem.h \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/QCheckBox \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/qcheckbox.h \
 		../templates/products/main.h \
 		../data/DataArray.h \
 		LoginWindow.hpp \
