@@ -1,3 +1,5 @@
+#pragma once
+
 #include <iostream>
 #include <string>
 #include "../Cart/main.h"
@@ -5,61 +7,89 @@
 
 using namespace std;
 
-// user class implementation
+// ---------------------------------------
+// User class: profile + cart + account
+// ---------------------------------------
+class User {
+private:
+    string  username;
+    int     password;      // simple demo password (int)
+    string  type;          // e.g. "customer", "admin"
+    CART    shoppingcart;
+    Account useraccount;
 
+public:
+    // Default constructor (needed for global currentUser)
+    User()
+        : username(""),
+          password(0),
+          type("customer"),
+          shoppingcart(),
+          useraccount(0.0, 0.0, "none") {}
 
-class User{
-  private:
-  string  username;
-  int password;
-  string type;
-  CART shoppingcart; 
-  Account useraccount;
+    // Parameterized constructor (create account)
+    User(const string& username,
+         int password,
+         const string& type,
+         double startingBalance,
+         const string& paymentMethod)
+        : username(username),
+          password(password),
+          type(type),
+          shoppingcart(),
+          useraccount(startingBalance, 0.0, paymentMethod) {}
 
-  User(string username, int password, string type, CART shoppingcart, Account useraccount):
-        username(username), password(password), type(type), shoppingcart(shoppingcart), useraccount(useraccount){}
+    // Getters
+    const string& getUsername()      const { return username; }
+    const string& getType()          const { return type; }
+    double        getBalance()             { return useraccount.gettotalbalence(); }
+    double        getLifetimeSpent()       { return useraccount.getlifetimespent(); }
 
-        string getusername(){ return this->username;}
-        string type(){ return this->type;}
-        int password(){ return this->password;}
+    CART&        getShoppingCart()        { return shoppingcart; }
+    const CART&  getShoppingCart() const  { return shoppingcart; }
 
-        CART getshoppingcart(){return this->shoppingcart; }
-        Account getAccount(){ return this->useraccount; }
+    // Setters / updates
+    void setUsername(const string& newname) { username = newname; }
+    void setType(const string& newtype)     { type     = newtype; }
+    void changePassword(int newpass)        { password = newpass; }
 
-        void setname(string newname ){ this->username = newname;}
-        void settype(string newtype){ this->type = newtype;}
-        void changepassword(int newpass){ this->password = newpass;}
-        void setshopping( CART newshopping){ this->shoppingcart = newshopping;}
-        void setaccount(Account newAcc){ this->useraccount = newAcc;}
+    // Simple password check
+    bool checkPassword(int entered) const {
+        return entered == password;
+    }
 
-    
+    // Cart operations
+    void addToCart(Products& newProduct) {
+        shoppingcart.addToCart(newProduct);
+        cout << "Added to shopping cart for user: " << username << endl;
+    }
 
-        void AddtoCart(Products newProduct){
-            this->shoppingcart.addToCart(newProduct);
-            cout<<"added to shopping cart:: funct-ran:userProfile/main.h"<<endl;
+    void removeFromCart(Products& toRemProd) {
+        shoppingcart.removeFromCart(toRemProd);
+    }
+
+    // ---------------------------------------
+    // Checkout: deduct from user's account
+    // ---------------------------------------
+    bool checkout() {
+        double total = shoppingcart.getTotalPrice();      // cart total
+        double funds = useraccount.gettotalbalence();     // user balance
+
+        if (total == 0.0) {
+            cout << "Cart is empty. Nothing to buy." << endl;
+            return false;
         }
-        void RemfromCart(Products toRemProd){
-            this->shoppingcart.removeFromCart(toRemProd);
+
+        if (funds < total) {
+            cout << "Transaction unsuccessful, insufficient funds." << endl;
+            return false;
         }
 
-        bool Buy(){
-            double Totalbalence = this->shoppingcart.getTotalPrice();
-            double Funds = this->useraccount.gettotalbalence();
-            if(Totalbalence > Funds) {
-                cout<<"Transaction Unsuccessfull, insufficient funds"<<endl;
-                return false;
-            }
-            Totalbalence -= Funds;
-            this->useraccount.setlifetimespent(Funds);
-            this->useraccount.settotalbalence(Totalbalence);
-            cout<<"Transaction Successfull, you'er delivery is on its way"<<endl;
-            return true;
-        }
-        
-        
-  ~User(){}
+        // Deduct and update lifetime spent
+        useraccount.settotalbalence(funds - total);
+        useraccount.setlifetimespent(useraccount.getlifetimespent() + total);
+
+        cout << "Transaction successful, your delivery is on its way!" << endl;
+        return true;
+    }
 };
-
-int main(){
-    return 0;
-}

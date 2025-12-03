@@ -14,12 +14,15 @@
 #include <vector>
 #include <QMessageBox>
 #include <QSpacerItem>
+#include <stack>
 
 #include "../templates/products/main.h"
-#include "../templates/Cart/main.h"
 #include "../data/DataArray.h"
+#include "./LoginWindow.hpp"
+#include "../templates/userProfile/main.h"
 
-CART cart;   // GLOBAL CART
+// Global logged‑in user
+User currentUser;
 
 // ----------------------------------------------
 // DarkWidget (for background styling, if needed)
@@ -100,9 +103,12 @@ QFrame* createProductCard(const Products& product) {
     // Buy Button
     QPushButton *buyBtn = new QPushButton("Buy");
     QObject::connect(buyBtn, &QPushButton::clicked, [product]() {
-        cart.addToCart(const_cast<Products&>(product));
+        // add to the current user's cart
+        Products &nonConst = const_cast<Products&>(product);
+        currentUser.addToCart(nonConst);
         // Optionally show confirmation
-        // QMessageBox::information(nullptr, "Cart", QString::fromStdString(product.getname()) + " added to cart.");
+        // QMessageBox::information(nullptr, "Cart",
+        //     QString::fromStdString(product.getname()) + " added to cart.");
     });
 
     // Layout
@@ -130,7 +136,7 @@ QWidget* buildCatalogPage() {
 
     for (size_t i = 0; i < productList.size(); ++i) {
         QFrame *card = createProductCard(productList[i]);
-        grid->addWidget(card, i / 3, i % 3);
+        grid->addWidget(card, static_cast<int>(i / 3), static_cast<int>(i % 3));
     }
 
     QScrollArea *scrollArea = new QScrollArea();
@@ -170,6 +176,7 @@ QWidget* buildCartPage() {
     QVBoxLayout *listLayout = new QVBoxLayout(container);
     listLayout->setSpacing(12);
 
+    CART &cart = currentUser.getShoppingCart();
     std::stack<Products> s = cart.getItemsToBuy();
 
     while (!s.empty()) {
@@ -185,12 +192,13 @@ QWidget* buildCartPage() {
         h->setSpacing(15);
 
         // Image
-        QLabel *img = new QLabel();
-        QPixmap pix(QString::fromStdString(p.getMainImage()));
-        if (!pix.isNull()) {
-            img->setPixmap(pix.scaled(60, 60, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-        }
-        img->setFixedSize(60, 60);
+       // Image
+QLabel *img = new QLabel();
+QPixmap pix(QString::fromStdString(p.getMainImage()));
+if (!pix.isNull()) {
+    img->setPixmap(pix.scaled(60, 60, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+}
+img->setFixedSize(60, 60);
 
         // Text (name + price)
         QVBoxLayout *v = new QVBoxLayout();
@@ -239,6 +247,17 @@ QWidget* buildCartPage() {
 
     layout->addWidget(summary);
 
+    // Checkout logic: use user's account balance
+    QObject::connect(checkoutBtn, &QPushButton::clicked, []() {
+        if (!currentUser.checkout()) {
+            QMessageBox::warning(nullptr, "Insufficient funds",
+                                 "Insufficient funds in your account to complete this purchase.");
+        } else {
+            QMessageBox::information(nullptr, "Success",
+                                     "Payment successful! Your order is on its way.");
+        }
+    });
+
     return cartPage;
 }
 
@@ -247,6 +266,15 @@ QWidget* buildCartPage() {
 // ----------------------------------------------
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
+
+    // 1) Login / Sign Up dialog
+    LoginWindow loginDialog;
+    if (loginDialog.exec() != QDialog::Accepted) {
+        return 0; // user closed dialog or cancelled
+    }
+    currentUser = loginDialog.getCurrentUser();
+
+    // 2) Main shopping window
     QWidget window;
     window.setWindowTitle("Product Catalog - Qt Edition");
     window.resize(1000, 600);
@@ -257,7 +285,7 @@ int main(int argc, char *argv[]) {
     // Stacked widget to switch pages
     QStackedWidget *stack = new QStackedWidget();
     QWidget *catalogPage = buildCatalogPage();
-    QWidget *cartPage = buildCartPage();
+    QWidget *cartPage    = buildCartPage();
     stack->addWidget(catalogPage);
     stack->addWidget(cartPage);
 
@@ -293,12 +321,11 @@ int main(int argc, char *argv[]) {
         stack->setCurrentWidget(catalogPage);
     });
 
-    QObject::connect(cartBtn, &QPushButton::clicked, [&, stack, catalogPage]( ) {
-        QWidget *newCartPage = buildCartPage();
-        stack->removeWidget(cartPage);
+    QObject::connect(cartBtn, &QPushButton::clicked, [&, stack]( ) {
+        QWidget *newCartPage = buildCartPage();   // rebuild to refresh items
+        stack->removeWidget(stack->widget(1));
         stack->addWidget(newCartPage);
-        cartPage = newCartPage;
-        stack->setCurrentWidget(cartPage);
+        stack->setCurrentWidget(newCartPage);
     });
 
     window.show();

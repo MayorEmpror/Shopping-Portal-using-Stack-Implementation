@@ -1308,9 +1308,20 @@ main.o: main.cpp /opt/homebrew/lib/QtWidgets.framework/Headers/QApplication \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/QSpacerItem \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/qlayoutitem.h \
 		../templates/products/main.h \
+		../data/DataArray.h \
+		LoginWindow.hpp \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/QDialog \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/qdialog.h \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/QTabWidget \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/qtabwidget.h \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/QLineEdit \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/qlineedit.h \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/QFormLayout \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/qformlayout.h \
+		../templates/userProfile/main.h \
 		../templates/Cart/main.h \
 		../templates/coupons/main.h \
-		../data/DataArray.h
+		../templates/account/main.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o main.cpp
 
 ####### Install
