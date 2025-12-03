@@ -1321,7 +1321,8 @@ main.o: main.cpp /opt/homebrew/lib/QtWidgets.framework/Headers/QApplication \
 		../templates/userProfile/main.h \
 		../templates/Cart/main.h \
 		../templates/coupons/main.h \
-		../templates/account/main.h
+		../templates/account/main.h \
+		UserStorage.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o main.cpp
 
 ####### Install

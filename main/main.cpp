@@ -19,6 +19,7 @@
 #include "../templates/products/main.h"
 #include "../data/DataArray.h"
 #include "./LoginWindow.hpp"
+#include "./UserStorage.hpp"
 #include "../templates/userProfile/main.h"
 
 // Global logged‑in user
@@ -52,8 +53,6 @@ QFrame* createProductCard(const Products& product) {
             background-color: #1c1c1c;
             border-radius: 12px;
             padding: 10px;
-            display: flex;
-            flex-direction: row;
         }
         QFrame:hover {
             background-color: #2a2a2a;
@@ -258,7 +257,10 @@ img->setFixedSize(60, 60);
             QMessageBox::information(nullptr, "Success",
                                      "Payment successful! Your order is on its way.");
 
-            // Refresh balance label (if it exists)
+            // Save updated user balance to file
+            UserStorage::saveUser(currentUser);
+
+            // Refresh balance label
             if (gBalanceLabel) {
                 gBalanceLabel->setText(
                     QString("Balance: $%1").arg(currentUser.getBalance(), 0, 'f', 2)
@@ -278,7 +280,15 @@ int main(int argc, char *argv[]) {
 
     // Login window
     LoginWindow loginWindow;
-    if (!loginWindow.exec()) {
+    if (loginWindow.exec() != QDialog::Accepted) {
+        return 1;
+    }
+    
+    // Get the logged-in user
+    currentUser = loginWindow.getCurrentUser();
+    
+    if (currentUser.getUsername().empty()) {
+        QMessageBox::warning(nullptr, "Error", "Failed to load user.");
         return 1;
     }
 
@@ -332,15 +342,26 @@ int main(int argc, char *argv[]) {
 
     // Stacked widget for main content
     QStackedWidget *stackedWidget = new QStackedWidget();
-    stackedWidget->addWidget(buildCatalogPage()); // Default page
-    stackedWidget->addWidget(buildCartPage());
+    QWidget *catalogPage = buildCatalogPage();
+    QWidget *cartPage = buildCartPage();
+    stackedWidget->addWidget(catalogPage); // index 0
+    stackedWidget->addWidget(cartPage);    // index 1
 
     // Connect buttons to switch pages
-    QObject::connect(catalogBtn, &QPushButton::clicked, [stackedWidget]() {
-        stackedWidget->setCurrentWidget(buildCatalogPage());
+    QObject::connect(catalogBtn, &QPushButton::clicked, [stackedWidget, catalogPage]() {
+        stackedWidget->setCurrentWidget(catalogPage);
     });
+    
     QObject::connect(cartBtn, &QPushButton::clicked, [stackedWidget]() {
-        stackedWidget->setCurrentWidget(buildCartPage());
+        // Rebuild cart page to refresh items
+        QWidget *oldCart = stackedWidget->widget(1);
+        if (oldCart) {
+            stackedWidget->removeWidget(oldCart);
+            delete oldCart;
+        }
+        QWidget *newCartPage = buildCartPage();
+        stackedWidget->insertWidget(1, newCartPage);
+        stackedWidget->setCurrentIndex(1);
     });
 
     // Add sidebar to main layout
