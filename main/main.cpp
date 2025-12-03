@@ -23,6 +23,8 @@
 
 // Global logged‑in user
 User currentUser;
+QLabel *gUserLabel   = nullptr;
+QLabel *gBalanceLabel = nullptr;
 
 // ----------------------------------------------
 // DarkWidget (for background styling, if needed)
@@ -255,6 +257,13 @@ img->setFixedSize(60, 60);
         } else {
             QMessageBox::information(nullptr, "Success",
                                      "Payment successful! Your order is on its way.");
+
+            // Refresh balance label (if it exists)
+            if (gBalanceLabel) {
+                gBalanceLabel->setText(
+                    QString("Balance: $%1").arg(currentUser.getBalance(), 0, 'f', 2)
+                );
+            }
         }
     });
 
@@ -262,34 +271,23 @@ img->setFixedSize(60, 60);
 }
 
 // ----------------------------------------------
-// MAIN
+// Main function
 // ----------------------------------------------
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
 
-    // 1) Login / Sign Up dialog
-    LoginWindow loginDialog;
-    if (loginDialog.exec() != QDialog::Accepted) {
-        return 0; // user closed dialog or cancelled
+    // Login window
+    LoginWindow loginWindow;
+    if (!loginWindow.exec()) {
+        return 1;
     }
-    currentUser = loginDialog.getCurrentUser();
 
-    // 2) Main shopping window
-    QWidget window;
-    window.setWindowTitle("Product Catalog - Qt Edition");
-    window.resize(1000, 600);
-
-    QHBoxLayout *mainLayout = new QHBoxLayout(&window);
+    // Main window
+    QWidget *mainWindow = new QWidget();
+    QHBoxLayout *mainLayout = new QHBoxLayout(mainWindow);
     mainLayout->setContentsMargins(0, 0, 0, 0);
 
-    // Stacked widget to switch pages
-    QStackedWidget *stack = new QStackedWidget();
-    QWidget *catalogPage = buildCatalogPage();
-    QWidget *cartPage    = buildCartPage();
-    stack->addWidget(catalogPage);
-    stack->addWidget(cartPage);
-
-    // Sidebar (menu)
+    // Sidebar (menu + user info)
     QVBoxLayout *sidebarLayout = new QVBoxLayout();
     sidebarLayout->setContentsMargins(20, 20, 20, 20);
     sidebarLayout->setSpacing(20);
@@ -306,28 +304,54 @@ int main(int argc, char *argv[]) {
     cartBtn->setStyleSheet("background-color: #292929; color: white; padding: 10px; border-radius: 8px;");
     sidebarLayout->addWidget(cartBtn);
 
-    sidebarLayout->addStretch(1);
+    // --- user info + sign out in the corner (bottom of sidebar) ---
+    sidebarLayout->addStretch(1);  // push user info to bottom
+
+    gUserLabel = new QLabel();
+    gUserLabel->setStyleSheet("color: #bbbbbb; font-size: 13px;");
+    gUserLabel->setText(
+        QString("User: %1").arg(QString::fromStdString(currentUser.getUsername()))
+    );
+    sidebarLayout->addWidget(gUserLabel);
+
+    gBalanceLabel = new QLabel();
+    gBalanceLabel->setStyleSheet("color: #bbbbbb; font-size: 13px;");
+    gBalanceLabel->setText(
+        QString("Balance: $%1").arg(currentUser.getBalance(), 0, 'f', 2)
+    );
+    sidebarLayout->addWidget(gBalanceLabel);
+
+    QPushButton *signOutBtn = new QPushButton("Sign Out");
+    signOutBtn->setStyleSheet("background-color: #444444; color: white; padding: 8px; border-radius: 6px;");
+    sidebarLayout->addWidget(signOutBtn);
 
     QWidget *sidebar = new QWidget();
     sidebar->setLayout(sidebarLayout);
     sidebar->setFixedWidth(220);
     sidebar->setStyleSheet("background-color: #181818;");
 
+    // Stacked widget for main content
+    QStackedWidget *stackedWidget = new QStackedWidget();
+    stackedWidget->addWidget(buildCatalogPage()); // Default page
+    stackedWidget->addWidget(buildCartPage());
+
+    // Connect buttons to switch pages
+    QObject::connect(catalogBtn, &QPushButton::clicked, [stackedWidget]() {
+        stackedWidget->setCurrentWidget(buildCatalogPage());
+    });
+    QObject::connect(cartBtn, &QPushButton::clicked, [stackedWidget]() {
+        stackedWidget->setCurrentWidget(buildCartPage());
+    });
+
+    // Add sidebar to main layout
     mainLayout->addWidget(sidebar);
-    mainLayout->addWidget(stack);
+    mainLayout->addWidget(stackedWidget);
 
-    // Connections for switching tabs
-    QObject::connect(catalogBtn, &QPushButton::clicked, [=]() {
-        stack->setCurrentWidget(catalogPage);
-    });
+    // Show main window
+    mainWindow->show();
 
-    QObject::connect(cartBtn, &QPushButton::clicked, [&, stack]( ) {
-        QWidget *newCartPage = buildCartPage();   // rebuild to refresh items
-        stack->removeWidget(stack->widget(1));
-        stack->addWidget(newCartPage);
-        stack->setCurrentWidget(newCartPage);
-    });
+    // Sign Out button connection
+    QObject::connect(signOutBtn, &QPushButton::clicked, &app, &QApplication::quit);
 
-    window.show();
     return app.exec();
 }
