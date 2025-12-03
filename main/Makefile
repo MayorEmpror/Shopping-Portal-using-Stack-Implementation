@@ -1312,8 +1312,6 @@ main.o: main.cpp /opt/homebrew/lib/QtWidgets.framework/Headers/QApplication \
 		LoginWindow.hpp \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/QDialog \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/qdialog.h \
-		/opt/homebrew/lib/QtWidgets.framework/Headers/QTabWidget \
-		/opt/homebrew/lib/QtWidgets.framework/Headers/qtabwidget.h \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/QLineEdit \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/qlineedit.h \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/QFormLayout \
