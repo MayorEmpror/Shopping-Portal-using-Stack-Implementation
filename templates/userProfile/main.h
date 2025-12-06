@@ -45,13 +45,22 @@ public:
     double        getBalance()             { return useraccount.gettotalbalence(); }
     double        getLifetimeSpent()       { return useraccount.getlifetimespent(); }
 
-    CART&        getShoppingCart()        { return shoppingcart; }
-    const CART&  getShoppingCart() const  { return shoppingcart; }
+    // Additional getters for UserStorage compatibility
+    int getPassword() const { return password; }
+    string getPaymentMethod()  { return useraccount.getpaymentmethods(); }
+
+    CART& getShoppingCart() { return shoppingcart; }
+    const CART& getShoppingCart() const { return shoppingcart; }
 
     // Setters / updates
     void setUsername(const string& newname) { username = newname; }
     void setType(const string& newtype)     { type     = newtype; }
     void changePassword(int newpass)        { password = newpass; }
+    
+    // Setter for lifetime spent (needed for loading from file)
+    void setLifetimeSpent(double amount) {
+        useraccount.setlifetimespent(amount);
+    }
 
     // Simple password check
     bool checkPassword(int entered) const {
