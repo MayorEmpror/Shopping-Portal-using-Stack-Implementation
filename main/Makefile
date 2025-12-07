@@ -1309,13 +1309,13 @@ main.o: main.cpp /opt/homebrew/lib/QtWidgets.framework/Headers/QApplication \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/qlayoutitem.h \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/QCheckBox \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/qcheckbox.h \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/QLineEdit \
+		/opt/homebrew/lib/QtWidgets.framework/Headers/qlineedit.h \
 		../templates/products/main.h \
 		../data/DataArray.h \
 		LoginWindow.hpp \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/QDialog \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/qdialog.h \
-		/opt/homebrew/lib/QtWidgets.framework/Headers/QLineEdit \
-		/opt/homebrew/lib/QtWidgets.framework/Headers/qlineedit.h \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/QFormLayout \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/qformlayout.h \
 		../templates/userProfile/main.h \

@@ -95,6 +95,38 @@ public:
         std::map<std::string, User> users = loadAllUsers();
         return users.find(username) != users.end();
     }
+    
+    // Delete user by username
+    static bool deleteUser(const std::string& username) {
+        std::map<std::string, User> users = loadAllUsers();
+        
+        // Remove the user
+        auto it = users.find(username);
+        if (it == users.end()) {
+            return false; // User not found
+        }
+        
+        users.erase(it);
+        
+        // Write remaining users back to file
+        std::ofstream file(USER_FILE);
+        if (!file.is_open()) {
+            return false;
+        }
+        
+        for (const auto& pair : users) {
+            const User& u = pair.second;
+            file << u.getUsername() << "|"
+                 << u.getPassword() << "|"
+                 << u.getType() << "|"
+                 << const_cast<User&>(u).getBalance() << "|"
+                 << const_cast<User&>(u).getLifetimeSpent() << "|"
+                 << const_cast<User&>(u).getPaymentMethod() << "\n";
+        }
+        
+        file.close();
+        return true;
+    }
 };
 
 const std::string UserStorage::USER_FILE = "users.txt";
