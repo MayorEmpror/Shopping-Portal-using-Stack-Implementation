@@ -29,9 +29,9 @@ public:
         return *this;
     }
 
-    string getname() { return this->name; }
-    string getdesc() { return this->description; }
-    int getdiscount() { return this->discount; }
+    string getname() const { return this->name; }
+    string getdesc() const { return this->description; }
+    int getdiscount() const { return this->discount; }
 
     void setname(string newname) { this->name = newname; }
     void setdesc(string newdesc) { this->description = newdesc; }

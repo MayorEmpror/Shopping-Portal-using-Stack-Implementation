@@ -9,6 +9,8 @@ SOURCES += main.cpp
 then after moving into the main directory run 
 
 
+
+
 qmake test.pro 
 
 make

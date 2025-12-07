@@ -4,3 +4,9 @@ git commit -m "feat: your feature"
 git commit -m "fix: your fix"
 git log 
 git branch 
+
+
+
+assemble conect Qt
+dsa
+   

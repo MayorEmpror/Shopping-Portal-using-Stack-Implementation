@@ -61,6 +61,11 @@ public:
     void setLifetimeSpent(double amount) {
         useraccount.setlifetimespent(amount);
     }
+    
+    // Setter for balance
+    void setBalance(double amount) {
+        useraccount.settotalbalence(amount);
+    }
 
     // Simple password check
     bool checkPassword(int entered) const {
