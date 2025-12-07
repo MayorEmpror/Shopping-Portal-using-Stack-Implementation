@@ -1,2 +1,4 @@
 Hashir|123|customer|25540|4459.95|paypal
+admin|1234|customer|400000|0|paypal
+hashirali|123|customer|3300.31|36699.7|paypal
 user|0|customer|140.02|359.98|card

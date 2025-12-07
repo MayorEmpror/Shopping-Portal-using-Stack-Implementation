@@ -157,7 +157,7 @@ QWidget* buildCatalogPage() {
 // ----------------------------------------------
 // Build Cart Page
 // ----------------------------------------------
-QWidget* buildCartPage() {
+QWidget* buildCartPage(QStackedWidget *stackedWidget = nullptr) {
     QWidget *cartPage = new QWidget();
     cartPage->setStyleSheet("background-color: #0a0a0a;");
 
@@ -326,14 +326,21 @@ QWidget* buildCartPage() {
 
         // Store product for removal
         Products productToRemove = p;
-        QObject::connect(removeBtn, &QPushButton::clicked, [productToRemove]() {
+        QObject::connect(removeBtn, &QPushButton::clicked, [productToRemove, stackedWidget]() {
             currentUser.removeFromCart(const_cast<Products&>(productToRemove));
             UserStorage::saveUser(currentUser);
             
             // Refresh the cart page by rebuilding it
-            // This will be handled by the cart button click in main()
-            QMessageBox::information(nullptr, "Removed", 
-                QString::fromStdString(productToRemove.getname()) + " removed from cart.");
+            if (stackedWidget) {
+                QWidget *oldCart = stackedWidget->widget(1);
+                if (oldCart) {
+                    stackedWidget->removeWidget(oldCart);
+                    delete oldCart;
+                }
+                QWidget *newCartPage = buildCartPage(stackedWidget);
+                stackedWidget->insertWidget(1, newCartPage);
+                stackedWidget->setCurrentIndex(1);
+            }
         });
 
         h->addWidget(removeBtn);
@@ -550,7 +557,7 @@ int main(int argc, char *argv[]) {
     // Stacked widget for main content
     QStackedWidget *stackedWidget = new QStackedWidget();
     QWidget *catalogPage = buildCatalogPage();
-    QWidget *cartPage = buildCartPage();
+    QWidget *cartPage = buildCartPage(stackedWidget);
     stackedWidget->addWidget(catalogPage); // index 0
     stackedWidget->addWidget(cartPage);    // index 1
 
@@ -566,7 +573,7 @@ int main(int argc, char *argv[]) {
             stackedWidget->removeWidget(oldCart);
             delete oldCart;
         }
-        QWidget *newCartPage = buildCartPage();
+        QWidget *newCartPage = buildCartPage(stackedWidget);
         stackedWidget->insertWidget(1, newCartPage);
         stackedWidget->setCurrentIndex(1);
     });
